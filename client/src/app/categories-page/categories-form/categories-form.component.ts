@@ -19,6 +19,7 @@ export class CategoriesFormComponent implements OnInit {
   imagePreview: string | ArrayBuffer
   form: FormGroup
   isNew = true
+  category: Category
 
   constructor(
     private route: ActivatedRoute,
@@ -46,6 +47,7 @@ export class CategoriesFormComponent implements OnInit {
       .subscribe(
         (category: Category) => {
           if (category) {
+            this.category = category
             this.form.patchValue({
               name: category.name
             })
@@ -75,6 +77,28 @@ export class CategoriesFormComponent implements OnInit {
     reader.readAsDataURL(file)
   }
 
-  onSubmit() {}
+  onSubmit() {
+    let obs$
+    this.form.disable()
+
+    if (this.isNew) {
+      obs$ = this.categoriesService.create(this.form.value.name, this.image)
+    } else {
+      obs$ = this.categoriesService.update(this.category._id, this.form.value.name, this.image)
+    }
+
+    obs$.subscribe(
+      category => {
+        this.category = category
+        MaterialService.toast('Изменения сохранены')
+        this.form.enable()
+
+      },
+      error => {
+        MaterialService.toast(error.error.message)
+        this.form.enable()
+      }
+    )
+  }
 
 }
