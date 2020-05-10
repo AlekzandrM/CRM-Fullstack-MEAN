@@ -8,3 +8,7 @@ export interface Category {
   user?: string
   _id?: string
 }
+
+export interface Message {
+  message: string
+}
