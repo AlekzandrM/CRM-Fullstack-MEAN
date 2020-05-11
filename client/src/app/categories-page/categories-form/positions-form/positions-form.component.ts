@@ -16,6 +16,7 @@ export class PositionsFormComponent implements OnInit, AfterViewInit, OnDestroy 
   loading = false
   modal: MaterialInstance
   form: FormGroup
+  positionId = null
 
   constructor(private positionsService: PositionsService) { }
 
@@ -41,15 +42,35 @@ export class PositionsFormComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   onSelectPosition(position: Position) {
+    this.positionId = position._id
+    this.form.patchValue({
+      name: position.name,
+      cost: position.cost
+    })
     this.modal.open()
+    MaterialService.updateTextInputs()
   }
 
   onAddPosition() {
+    this.positionId = null
+    this.form.reset({name: null, cost: 1})
     this.modal.open()
+    MaterialService.updateTextInputs()
   }
 
-  onDeletePosition(position: Position) {
-
+  onDeletePosition(event: Event, position: Position) {
+    event.stopPropagation()
+    const decision = window.confirm(`Удалить позицию "${position.name}"`)
+    if (decision) {
+      this.positionsService.delete(position).subscribe(
+        response => {
+          const idx = this.positions.findIndex(p => p._id === position._id)
+          this.positions.splice(idx, 1)
+          MaterialService.toast(response.message)
+        },
+        error => MaterialService.toast(error.error.message)
+      )
+    }
   }
 
   onCancel() {
@@ -65,17 +86,33 @@ export class PositionsFormComponent implements OnInit, AfterViewInit, OnDestroy 
       category: this.categoryId
     }
 
-    this.positionsService.create(newPosition).subscribe(
-      position => {
-        this.positions.push(position)
-        MaterialService.toast('Позиция была создана')
-      },
-      error => MaterialService.toast(error.error.message),
-      () => {
-        this.form.enable()
-        this.form.reset({name: '', cost: 1})
-        this.modal.close()
-      }
-    )
+    const completed = () => {
+      this.form.enable()
+      this.form.reset({name: '', cost: 1})
+      this.modal.close()
+    }
+
+    if (this.positionId) {
+      newPosition._id = this.positionId
+      this.positionsService.update(newPosition).subscribe(
+        position => {
+          const idx = this.positions.findIndex(p => p._id === position._id)
+          this.positions[idx] = position
+          MaterialService.toast('Изменения сохранены')
+        },
+        error => MaterialService.toast(error.error.message),
+        completed
+      )
+    } else {
+      this.positionsService.create(newPosition).subscribe(
+        position => {
+          this.positions.push(position)
+          MaterialService.toast('Позиция была создана')
+        },
+        error => MaterialService.toast(error.error.message),
+        completed
+      )
+    }
+
   }
 }
