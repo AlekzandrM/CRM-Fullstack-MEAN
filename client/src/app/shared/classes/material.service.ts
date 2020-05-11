@@ -21,7 +21,7 @@ export class MaterialService {
     M.updateTextFields()
   }
 
-  static initModal(ref: ElementRef): MaterialService {
+  static initModal(ref: ElementRef): MaterialInstance  {
     return M.Modal.init(ref.nativeElement)
   }
 }
