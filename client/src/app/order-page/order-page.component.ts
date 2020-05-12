@@ -1,11 +1,13 @@
 import {AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {NavigationEnd, Router} from "@angular/router";
 import {MaterialInstance, MaterialService} from "../shared/classes/material.service";
+import {OrderService} from "./order.service";
 
 @Component({
   selector: 'app-order-page',
   templateUrl: './order-page.component.html',
-  styleUrls: ['./order-page.component.scss']
+  styleUrls: ['./order-page.component.scss'],
+  providers: [OrderService]
 })
 export class OrderPageComponent implements OnInit, OnDestroy, AfterViewInit {
 
@@ -13,7 +15,8 @@ export class OrderPageComponent implements OnInit, OnDestroy, AfterViewInit {
   modal: MaterialInstance
   @ViewChild('modal') modalRef: ElementRef
 
-  constructor(private router: Router) {
+  constructor(private router: Router,
+              private order: OrderService) {
   }
 
   ngOnInit() {

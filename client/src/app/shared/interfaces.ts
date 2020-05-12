@@ -19,4 +19,5 @@ export interface Position {
   user?: string
   category: string
   _id?: string
+  quantity?: number
 }
