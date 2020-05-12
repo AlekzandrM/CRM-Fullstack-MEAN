@@ -15,10 +15,25 @@ export class OrderService {
       quantity: position.quantity,
       _id: position._id
     })
-    this.list.push(orderPosition)
+
+    const candidate = this.list.find(p => p._id === orderPosition._id)
+
+    if (candidate) {
+      candidate.quantity += orderPosition.quantity // Изменяем кол-во
+    } else {
+      this.list.push(orderPosition)
+    }
+
+    this.computePrice()
   }
 
   remove() {}
 
   clear() {}
+
+  private computePrice() {
+    this.price = this.list.reduce((total, item) => {
+      return total += item.quantity * item.cost
+    }, 0)
+  }
 }
