@@ -27,7 +27,11 @@ export class OrderService {
     this.computePrice()
   }
 
-  remove() {}
+  remove(orderPosition: OrderPosition) {
+    const idx = this.list.findIndex(p => p._id === orderPosition._id)
+    this.list.splice(idx, 1)
+    this.computePrice()
+  }
 
   clear() {}
 
