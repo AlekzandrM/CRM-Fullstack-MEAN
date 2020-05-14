@@ -16,7 +16,7 @@
 
 <app-history-filter *ngIf="isFilterVisible"></app-history-filter>
 
-<app-history-list></app-history-list>
+<app-history-list [orders]="orders"></app-history-list>
 
 <div class="center mb2">
   <button class="btn waves-effect grey darken-1 btn-small">Загрузить еще</button>
