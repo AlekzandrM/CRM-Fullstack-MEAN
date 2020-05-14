@@ -22,10 +22,15 @@ export class HistoryPageComponent implements OnInit, OnDestroy, AfterViewInit {
   offset = 0
   limit = STEP
 
+  loading = false //для подгрузки заказов
+  reloading = false // для перезагр заказов(фильтры)
+  noMoreOrders = false //блокировка btn Загр еще
+
   constructor(private ordersService: OrdersService) {
   }
 
   ngOnInit() {
+    this.reloading = true
     this.fetch()
   }
 
@@ -35,8 +40,17 @@ export class HistoryPageComponent implements OnInit, OnDestroy, AfterViewInit {
       limit: this.limit
     }
     this.oSub = this.ordersService.fetch(params).subscribe(orders => {
-      this.orders = orders
+      this.orders = this.orders.concat(orders)
+      this.noMoreOrders = orders.length < STEP
+      this.loading = false
+      this.reloading = false
     })
+  }
+
+  loadMore() {
+    this.offset += STEP
+    this.loading = true
+    this.fetch()
   }
 
   ngOnDestroy() {
