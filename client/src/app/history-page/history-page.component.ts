@@ -2,7 +2,7 @@ import {AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild} from
 import {MaterialInstance, MaterialService} from "../shared/classes/material.service";
 import {OrdersService} from "../shared/services/orders.service";
 import {Subscription} from "rxjs";
-import {Order} from "../shared/interfaces";
+import {Filter, Order} from "../shared/interfaces";
 
 const STEP = 2
 
@@ -60,6 +60,10 @@ export class HistoryPageComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngAfterViewInit() {
     this.tooltip = MaterialService.initTooltip(this.tooltipRef)
+  }
+
+  applyFilter(filter: Filter) {
+    console.log(filter)
   }
 
 }

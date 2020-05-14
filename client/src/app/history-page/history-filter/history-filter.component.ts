@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, EventEmitter, OnInit, Output} from '@angular/core';
+import {Filter} from "../../shared/interfaces";
 
 @Component({
   selector: 'app-history-filter',
@@ -6,10 +7,24 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./history-filter.component.scss']
 })
 export class HistoryFilterComponent implements OnInit {
+  @Output() onFilter = new EventEmitter<Filter>()
 
-  constructor() { }
+  order: number
+
+  constructor() {
+  }
 
   ngOnInit(): void {
+  }
+
+  submitFilter() {
+    const filter: Filter = {}
+
+    if (this.order) {
+      filter.order = this.order
+    }
+
+    this.onFilter.emit(filter)
   }
 
 }

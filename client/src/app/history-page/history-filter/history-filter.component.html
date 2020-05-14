@@ -2,7 +2,7 @@
   <div class="fr">
     <div class="col order">
       <div class="input-field inline order-position-input">
-        <input type="number" id="number" min="1">
+        <input type="number" id="number" min="1" [(ngModel)]="order">
         <label for="number">Номер заказа</label>
       </div>
     </div>
@@ -19,5 +19,10 @@
     </div>
   </div>
 
-  <button class="btn waves-effect wavers-light btn-small">Применить фильтр</button>
+  <button
+    class="btn waves-effect wavers-light btn-small"
+    (click)="submitFilter()"
+  >
+    Применить фильтр
+  </button>
 </div>
