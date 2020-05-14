@@ -18,6 +18,7 @@ export class HistoryPageComponent implements OnInit, OnDestroy, AfterViewInit {
   tooltip: MaterialInstance
   oSub: Subscription
   orders: Order[] = []
+  filter: Filter = {}
 
   offset = 0
   limit = STEP
@@ -35,10 +36,10 @@ export class HistoryPageComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private fetch() {
-    const params = {
+    const params = Object.assign({}, this.filter, {
       offset: this.offset,
       limit: this.limit
-    }
+    })
     this.oSub = this.ordersService.fetch(params).subscribe(orders => {
       this.orders = this.orders.concat(orders)
       this.noMoreOrders = orders.length < STEP
@@ -63,7 +64,15 @@ export class HistoryPageComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   applyFilter(filter: Filter) {
-    console.log(filter)
+    this.orders = []
+    this.offset = 0
+    this.filter = filter
+    this.reloading = true
+    this.fetch()
+  }
+
+  isFiltered(): boolean {
+    return Object.keys(this.filter).length !== 0
   }
 
 }

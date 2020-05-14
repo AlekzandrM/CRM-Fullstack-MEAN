@@ -1,20 +1,40 @@
-import {Component, EventEmitter, OnInit, Output} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, EventEmitter, OnDestroy, Output, ViewChild} from '@angular/core';
 import {Filter} from "../../shared/interfaces";
+import {MaterialDatepicker, MaterialService} from "../../shared/classes/material.service";
 
 @Component({
   selector: 'app-history-filter',
   templateUrl: './history-filter.component.html',
   styleUrls: ['./history-filter.component.scss']
 })
-export class HistoryFilterComponent implements OnInit {
+export class HistoryFilterComponent implements OnDestroy, AfterViewInit {
   @Output() onFilter = new EventEmitter<Filter>()
+  @ViewChild('start') startRef: ElementRef
+  @ViewChild('end') endRef: ElementRef
 
   order: number
+  start: MaterialDatepicker
+  end: MaterialDatepicker
 
-  constructor() {
+  isValid = true
+
+  ngOnDestroy(): void {
+    this.start.destroy()
+    this.end.destroy()
   }
 
-  ngOnInit(): void {
+  ngAfterViewInit(): void {
+    this.start = MaterialService.initDatepicker(this.startRef, this.validate.bind(this))
+    this.end = MaterialService.initDatepicker(this.endRef, this.validate.bind(this))
+  }
+
+  validate() {
+    if (!this.start.date || !this.end.date ) {
+      this.isValid = false
+      return
+    }
+
+   this.isValid =  this.start.date < this.end.date
   }
 
   submitFilter() {
@@ -22,6 +42,14 @@ export class HistoryFilterComponent implements OnInit {
 
     if (this.order) {
       filter.order = this.order
+    }
+
+    if (this.start.date) {
+      filter.start = this.start.date
+    }
+
+    if (this.end.date) {
+      filter.end = this.end.date
     }
 
     this.onFilter.emit(filter)
