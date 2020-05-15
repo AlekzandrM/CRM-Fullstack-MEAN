@@ -39,7 +39,7 @@
       <tr *ngFor="let orderItem of selectedOrder.list">
         <td>{{orderItem.name}}</td>
         <td>{{orderItem.quantity}}</td>
-        <td>${{orderItem.cost}}</td>
+        <td>{{orderItem.cost}} грн.</td>
       </tr>
       </tbody>
     </table>

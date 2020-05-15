@@ -30,7 +30,7 @@ export class HistoryFilterComponent implements OnDestroy, AfterViewInit {
 
   validate() {
     if (!this.start.date || !this.end.date ) {
-      this.isValid = false
+      this.isValid = true
       return
     }
 
