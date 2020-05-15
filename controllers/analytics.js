@@ -8,7 +8,7 @@ module.exports.overview = async (req, res) => {
         const allOrders = await Order.find({user: req.user.id}).sort({date: 1})
         // карта по дням в какой день сколько заказов в {}
         const ordersMap = getOrdersMap(allOrders)
-        // колич заказов за вчера
+        // заказы за вчера
         const yesterdayOrders = ordersMap[moment().add(-1, 'd').format('DD.MM.YYYY')] || []
 
         // Количество заказов вчера
@@ -22,19 +22,31 @@ module.exports.overview = async (req, res) => {
         // 4. % для количества заказов
         // ((заказов вчера / кол-во заказов в день) -1 ) * 100
         const ordersPercent = (((yesterdayOrdersNumber / ordersPerDay) -1 ) * 100).toFixed(2)
+        // 5. Общая выручка
+        const totalGain = calculatePrice(allOrders)
+        // 6. Выручка в день
+        const gainPerDay = totalGain / daysNumber
+        // 7. Выручка за вчера
+        const yesterdayGain = calculatePrice(yesterdayOrders)
+        // 8. % выручки
+        const gainPercent = (((yesterdayGain / gainPerDay) -1 ) * 100).toFixed(2)
+        // 9. Сравнение выручки
+        const compareGain = (yesterdayGain - gainPerDay).toFixed(2)
+        // 10. Сравнение количества заказов
+        const compareNumber = (yesterdayOrdersNumber - ordersPerDay).toFixed(2)
 
         res.status(200).json({
             gain: {
-                percent: '',
-                compare: '',
-                yesterday: '',
-                isHigher: ''
+                percent: Math.abs(+gainPercent),
+                compare: Math.abs(+compareGain),
+                yesterday: +yesterdayGain,
+                isHigher: +gainPercent > 0
             },
             orders: {
-                percent: '',
-                compare: '',
-                yesterday: '',
-                isHigher: ''
+                percent: Math.abs(+ordersPercent),
+                compare: Math.abs(+compareNumber),
+                yesterday: +yesterdayOrdersNumber,
+                isHigher: +ordersPercent > 0
             }
         })
     } catch (e) {
@@ -65,4 +77,13 @@ function getOrdersMap(orders = [] ) {
         daysOrders[date].push(order)
     })
     return daysOrders
+}
+
+function calculatePrice(orders = []) {
+    return orders.reduce((total, order) => {
+        const orderPrice = order.list.reduce((orderTotal, item) => {
+            return orderTotal += item.quantity * item.cost
+        }, 0)
+        return total += orderPrice
+    }, 0)
 }
