@@ -27,18 +27,30 @@ export class AnalyticsPageComponent implements AfterViewInit, OnDestroy {
       color: 'rgb(255, 99, 132)'
     }
 
+    const orderConfig: any = {
+      label: 'Заказы',
+      color: 'rgb(54, 162, 235)'
+    }
+
     this.aSub = this.service.getAnalytics().subscribe((res: AnalyticsPage) => {
       this.average = res.average
 
       gainConfig.labels = res.chart.map(item => item.date)
       gainConfig.data = res.chart.map(item => item.gain)
 
+      orderConfig.labels = res.chart.map(item => item.date)
+      orderConfig.data = res.chart.map((item) => item.order)
+
       // Получаем контекст канваса
       const gainCtx = this.gainRef.nativeElement.getContext('2d')
       gainCtx.canvas.height = '300px'
 
+      const orderCtx = this.orderRef.nativeElement.getContext('2d')
+      orderCtx.canvas.height = '300px'
+
       // Создаем
       new Chart(gainCtx, createCharConfig(gainConfig))
+      new Chart(orderCtx, createCharConfig(orderConfig))
 
       this.pending = false
     })
