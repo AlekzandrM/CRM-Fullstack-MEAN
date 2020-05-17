@@ -53,3 +53,14 @@ export interface OverviewPageItem {
   yesterday: number
   isHigher: boolean
 }
+
+export interface AnalyticsPage {
+  average: number
+  chart: AnalyticsChartItem[]
+}
+
+export interface AnalyticsChartItem {
+  date: string
+  order: number
+  gain: number
+}
