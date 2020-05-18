@@ -42,7 +42,7 @@ testem.log
 # System Files
 .DS_Store
 Thumbs.db
+
 /node_modules/
 "node_modules/"
-/config/
-"config/"
+config/keys.dev.js
